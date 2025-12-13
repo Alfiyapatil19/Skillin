@@ -1,0 +1,45 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #050f1a;
+  font-family: 'Poppins', Arial, sans-serif;
+}
+
+.logo-container {
+  width: 400px;
+}
+
+.logo-svg {
+  width: 100%;
+}
+
+.hex {
+  fill: none;
+  stroke: url(#skillinGrad);
+  stroke-width: 18;
+  stroke-linejoin: round;
+}
+
+.s-shape {
+  fill: none;
+  stroke: url(#skillinGrad);
+  stroke-width: 20;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.logo-text {
+  fill: url(#skillinGrad);
+  font-size: 56px;
+  font-weight: 600;
+  letter-spacing: 10px;
+  text-anchor: middle;
+}

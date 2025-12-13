@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Skillin Logo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="logo-container">
+    <svg viewBox="0 0 600 600" class="logo-svg"
+         xmlns="http://www.w3.org/2000/svg">
+
+      <defs>
+        <linearGradient id="skillinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ff6a6a"/>
+          <stop offset="50%" stop-color="#b44cff"/>
+          <stop offset="100%" stop-color="#6a00ff"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Hexagon -->
+      <path d="
+        M300 110
+        L430 190
+        L430 350
+        L300 430
+        L170 350
+        L170 190
+        Z"
+        class="hex"/>
+
+      <!-- S shape -->
+      <path d="
+        M350 210
+        H270
+        C235 210 235 250 270 250
+        H330
+        C365 250 365 290 330 290
+        H250"
+        class="s-shape"/>
+
+      <!-- Text -->
+      <text x="300" y="520" class="logo-text">SKILLIN</text>
+    </svg>
+  </div>
+
+</body>
+</html>
