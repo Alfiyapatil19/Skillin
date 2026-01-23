@@ -2,15 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from database import SessionLocal, init_db
-from auth import router
+from auth import router as auth_router
 from dashboard_router import router as dashboard_router
 from interview_router import router as interview_router
-
-from models import Skill, Course, StudentProgress, User
-from dashboard_models import Mission
 from routers import profile as profile_router
 
-app = FastAPI()
+from models import Skill, Course, User
+from dashboard_models import Mission
+
+app = FastAPI(title="Skillin - Student Management with AI")
 
 # ---------- CREATE DATABASE TABLES ----------
 init_db()
@@ -32,28 +32,22 @@ def populate_test_data():
             db.refresh(system_user)
 
         skills_data = [
-            {"name": "Python"},
-            {"name": "DSA"},
-            {"name": "Aptitude"},
-            {"name": "Web Development"},
-            {"name": "Frontend Development"},
-            {"name": "Backend Development"},
-            {"name": "Cloud Computing"},
-            {"name": "Cyber Security"},
-            {"name": "Data Analytics"},
-            {"name": "Data Science"},
+            "Python", "DSA", "Aptitude", "Web Development",
+            "Frontend Development", "Backend Development",
+            "Cloud Computing", "Cyber Security",
+            "Data Analytics", "Data Science"
         ]
 
-        for skill in skills_data:
+        for skill_name in skills_data:
             exists = db.query(Skill).filter(
-                Skill.name == skill["name"],
+                Skill.name == skill_name,
                 Skill.user_id == system_user.id
             ).first()
 
             if not exists:
                 db.add(
                     Skill(
-                        name=skill["name"],
+                        name=skill_name,
                         user_id=system_user.id,
                         level="Catalog",
                         progress=0
@@ -104,16 +98,18 @@ def populate_test_data():
         db.close()
 
 
-# Run seed on startup (better way)
+# ---------- RUN SEED ON STARTUP ----------
 @app.on_event("startup")
 def startup_event():
     populate_test_data()
 
-# ---------- ROUTES ----------
-app.include_router(router, prefix="/api")  # auth
-app.include_router(dashboard_router, prefix="/api")
-app.include_router(interview_router, prefix="/api")
+
+# ---------- ROUTERS ----------
+app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
+app.include_router(dashboard_router, prefix="/api/dashboard", tags=["Dashboard"])
+app.include_router(interview_router, prefix="/api/interview", tags=["AI Interview"])
 app.include_router(profile_router.router, prefix="/api/profile", tags=["Profile"])
+
 
 # ---------- CORS ----------
 app.add_middleware(
@@ -123,12 +119,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-# ---------- ROUTES ----------
-app.include_router(router, prefix="/api")
-app.include_router(dashboard_router, prefix="/api")
-app.include_router(interview_router, prefix="/api")
 
 
 # ---------- HEALTH CHECK ----------
