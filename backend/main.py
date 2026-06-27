@@ -10,8 +10,18 @@ from interview_router import router as interview_router
 
 from models import Skill, Course, StudentProgress, User
 from dashboard_models import Mission
+from student_profile import router as profile_router
+from fastapi.staticfiles import StaticFiles
+
+from opportunity_router import router as opportunity_router
+from routers import opportunities 
+from utils import hash_password
 
 app = FastAPI()
+app.include_router(profile_router)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="profile_uploads")
+app.include_router(opportunity_router)
+app.include_router(opportunities.router, tags=["opportunities"])
 
 # ---------- CREATE DATABASE TABLES ----------
 init_db()
@@ -26,7 +36,7 @@ def populate_test_data():
             system_user = User(
                 username="system",
                 email="system@skillin.ai",
-                password="system"
+                password=hash_password("system")
             )
             db.add(system_user)
             db.commit()
@@ -126,6 +136,9 @@ app.include_router(router, prefix="/api")
 app.include_router(dashboard_router, prefix="/api")
 app.include_router(interview_router, prefix="/api")
 
+
+
+# Register routers
 
 # ---------- HEALTH CHECK ----------
 @app.get("/")

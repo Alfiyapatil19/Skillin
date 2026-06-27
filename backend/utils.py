@@ -5,14 +5,30 @@ import smtplib
 import os
 from email.message import EmailMessage
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Prefer pbkdf2_sha256 for new hashes to avoid bcrypt backend issues,
+# but keep bcrypt in the schemes list so existing bcrypt hashes can still be
+# recognized.
+pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
 
 # ---------- PASSWORD ----------
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    try:
+        return pwd_context.verify(plain, hashed)
+    except Exception:
+        # Fallback: try direct bcrypt check if available. This avoids some
+        # passlib/bcrypt backend detection bugs on certain environments.
+        try:
+            import bcrypt as _bcrypt
+            pw = plain.encode("utf-8")
+            if len(pw) > 72:
+                pw = pw[:72]
+            return _bcrypt.checkpw(pw, hashed.encode("utf-8"))
+        except Exception:
+            # As a last resort, if verification fails, return False.
+            return False
 
 def is_strong_password(password: str) -> bool:
     return (

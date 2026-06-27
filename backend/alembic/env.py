@@ -1,9 +1,5 @@
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-
-
 from logging.config import fileConfig
+
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
@@ -24,7 +20,6 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 from models import Base
 target_metadata = Base.metadata
-
 
 
 # other values from the config, defined by the needs of env.py,

@@ -1,8 +1,8 @@
 import requests
 
 # Ollama local API endpoint (correct)
-OLLAMA_URL = "http://localhost:11434/v1/generate"
-MODEL_NAME = "mistral"
+OLLAMA_URL = "http://localhost:11434/api/generate"
+MODEL_NAME = "tinyllama"
 
 def call_ai(prompt: str):
     """
@@ -12,7 +12,6 @@ def call_ai(prompt: str):
         "model": MODEL_NAME,
         "prompt": prompt,
         "stream": False,
-        "max_tokens": 1000  # adjust if needed
     }
 
     try:

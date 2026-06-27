@@ -44,3 +44,29 @@ class Profile(BaseModel):
     skills: List[SkillBase] = []
     projects: List[ProjectBase] = []
     skillin_score: Optional[int] = 0
+
+    # ----------------- Opportunities Schemas -----------------
+
+class OpportunityCreate(BaseModel):
+    title: str
+    company: str
+    type: str           # internship / job / hackathon
+    platform: str       # unstop / linkedin / manual
+    deadline: Optional[str] = None
+    description: Optional[str] = None
+    stipend: Optional[str] = None
+
+
+class OpportunityResponse(BaseModel):
+    id: int
+    title: str
+    company: str
+    type: str
+    platform: str
+    deadline: Optional[str]
+    description: Optional[str]
+    stipend: Optional[str]
+
+    class Config:
+        from_attributes = True
+

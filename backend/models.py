@@ -13,6 +13,7 @@ class User(Base):
     username = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
+    profile_pic_url = Column(String, default="") 
 
     education = Column(String, nullable=True)
     college_name = Column(String, nullable=True)
@@ -102,3 +103,18 @@ class InterviewQuestion(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     session = relationship("InterviewSession", back_populates="qa_pairs")
+
+    # ------------------- OPPORTUNITIES -------------------
+class Opportunity(Base):
+    __tablename__ = "opportunities"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(200), nullable=False)
+    company = Column(String(150), nullable=False)
+    type = Column(String(50), nullable=False)        # internship, job, hackathon, workshop
+    platform = Column(String(50), nullable=False)    # unstop, linkedin, internshala, github, api
+    deadline = Column(String(50), nullable=True)
+    description = Column(Text, nullable=True)
+    stipend = Column(String(100), nullable=True)
+    source = Column(String(20), default="manual")    # manual / api
+    created_at = Column(DateTime, default=datetime.utcnow)

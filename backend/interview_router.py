@@ -1,35 +1,43 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from models import InterviewSession, InterviewQuestion, User
-from ai_mentor import get_next_question, evaluate_answer, generate_interview_summary
+from ai_mentor import (
+    get_next_question,
+    evaluate_answer,
+    generate_interview_summary,
+    extract_score_and_feedback,
+)
+from auth import decode_access_token
 from datetime import datetime
 from pydantic import BaseModel
-import re
 
-# --------- ROUTER ---------
 router = APIRouter(prefix="/interview", tags=["AI Mentor Interviews"])
 
-# --------- SCHEMAS ---------
+# =============== SCHEMAS ===============
 class StartInterviewRequest(BaseModel):
     skill_name: str = "Web Development"
     difficulty: str = "intermediate"  # beginner, intermediate, advanced
     total_questions: int = 5
 
+
 class SubmitAnswerRequest(BaseModel):
     answer: str
+
 
 class InterviewQuestionResponse(BaseModel):
     question_id: int
     question_number: int
     question_text: str
 
+
 class AnswerEvaluationResponse(BaseModel):
     score: float
     feedback: str
     is_last_question: bool
 
-# --------- DEPENDENCIES ---------
+
+# =============== DEPENDENCIES ===============
 def get_db():
     db = SessionLocal()
     try:
@@ -37,17 +45,28 @@ def get_db():
     finally:
         db.close()
 
-def get_current_user_id() -> int:
-    """In production, extract from JWT token"""
-    return 1  # Default for testing
 
-# --------- ENDPOINTS ---------
+def get_current_user_id(authorization: str = Header(default=None)) -> int:
+    """Extract authenticated user id from Bearer token."""
+    if not authorization or not authorization.lower().startswith("bearer "):
+        raise HTTPException(status_code=401, detail="Missing bearer token")
+    token = authorization.split(" ", 1)[1].strip()
+    payload = decode_access_token(token)
+    user_id = payload.get("sub")
+    if not isinstance(user_id, int):
+        raise HTTPException(status_code=401, detail="Invalid token payload")
+    return user_id
+
+
+# =============== ENDPOINTS ===============
+
 @router.post("/start")
 def start_interview(
     request: StartInterviewRequest,
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id)
 ):
+    """Start a new interview session"""
     try:
         interview = InterviewSession(
             user_id=user_id,
@@ -72,12 +91,14 @@ def start_interview(
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error starting interview: {str(e)}")
 
+
 @router.get("/question/{interview_id}")
 def get_question(
     interview_id: int,
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id)
 ):
+    """Get the next interview question"""
     try:
         interview = db.query(InterviewSession).filter(
             InterviewSession.id == interview_id,
@@ -102,12 +123,13 @@ def get_question(
         }
 
         question_text = get_next_question(context)
+
         if not question_text:
             raise HTTPException(status_code=500, detail="Failed to generate question")
 
         question_text = question_text.replace("Question: ", "").strip()
 
-        # Save question to DB
+        # Save question to database
         interview.questions_asked += 1
         db.commit()
 
@@ -134,6 +156,7 @@ def get_question(
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error getting question: {str(e)}")
 
+
 @router.post("/answer/{interview_id}/{question_id}")
 def submit_answer(
     interview_id: int,
@@ -142,6 +165,7 @@ def submit_answer(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id)
 ):
+    """Submit answer for a question and get AI evaluation"""
     try:
         interview = db.query(InterviewSession).filter(
             InterviewSession.id == interview_id,
@@ -159,38 +183,30 @@ def submit_answer(
         if not question:
             raise HTTPException(status_code=404, detail="Question not found")
 
-        # Save answer
+        # Save student's answer
         question.student_answer = request.answer
         question.status = "answered"
         db.commit()
 
-        # Evaluate answer
+        # Get AI evaluation
         feedback_text = evaluate_answer(
             question=question.question_text,
             answer=request.answer,
             context=interview.skill_name
         )
+
         if not feedback_text:
             raise HTTPException(status_code=500, detail="Failed to evaluate answer")
 
-        # Parse score
-        score = 0.0
-        match = re.search(r"Score[:\s]+([0-9]{1,3}(\.[0-9]+)?)", feedback_text)
-        if match:
-            try:
-                score = float(match.group(1))
-            except:
-                score = 0.0
+        score, feedback_cleaned, breakdown = extract_score_and_feedback(feedback_text)
 
-        feedback_cleaned = "\n".join([line.strip() for line in feedback_text.splitlines() if line.strip()])
-
-        # Save feedback
+        # Save feedback and score
         question.ai_feedback = feedback_cleaned
         question.score = score
         question.status = "evaluated"
         db.commit()
 
-        # Update interview average
+        # Update interview average score
         all_scores = db.query(InterviewQuestion).filter(
             InterviewQuestion.session_id == interview_id,
             InterviewQuestion.score != None
@@ -207,6 +223,7 @@ def submit_answer(
             "success": True,
             "score": score,
             "feedback": feedback_cleaned,
+            "breakdown": breakdown,
             "is_last_question": is_last_question,
             "average_score": interview.average_score
         }
@@ -217,12 +234,14 @@ def submit_answer(
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error submitting answer: {str(e)}")
 
+
 @router.post("/end/{interview_id}")
 def end_interview(
     interview_id: int,
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id)
 ):
+    """End interview and generate summary"""
     try:
         interview = db.query(InterviewSession).filter(
             InterviewSession.id == interview_id,
@@ -245,14 +264,20 @@ def end_interview(
 
         interview_data = {
             "qa_pairs": [
-                {"question": qa.question_text, "answer": qa.student_answer or "Not answered", "score": qa.score or 0}
+                {
+                    "question": qa.question_text,
+                    "answer": qa.student_answer or "Not answered",
+                    "score": qa.score or 0
+                }
                 for qa in qa_pairs
             ],
             "scores": [qa.score for qa in qa_pairs if qa.score is not None]
         }
 
+        # Generate summary
         summary = generate_interview_summary(interview_data)
 
+        # Update interview
         interview.status = "completed"
         interview.completed_at = datetime.utcnow()
         interview.summary = summary
@@ -273,11 +298,13 @@ def end_interview(
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error ending interview: {str(e)}")
 
+
 @router.get("/history/{user_id}")
 def get_interview_history(
     user_id: int,
     db: Session = Depends(get_db)
 ):
+    """Get all past interviews for a user"""
     try:
         interviews = db.query(InterviewSession).filter(
             InterviewSession.user_id == user_id
@@ -295,11 +322,13 @@ def get_interview_history(
                     "total_questions": iv.total_questions,
                     "created_at": iv.created_at.isoformat() if iv.created_at else None,
                     "completed_at": iv.completed_at.isoformat() if iv.completed_at else None
-                } for iv in interviews
+                }
+                for iv in interviews
             ]
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching history: {str(e)}")
+
 
 @router.get("/result/{interview_id}")
 def get_interview_result(
@@ -307,6 +336,7 @@ def get_interview_result(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id)
 ):
+    """Get detailed results of a completed interview"""
     try:
         interview = db.query(InterviewSession).filter(
             InterviewSession.id == interview_id,
@@ -336,7 +366,8 @@ def get_interview_result(
                     "answer": qa.student_answer,
                     "feedback": qa.ai_feedback,
                     "score": qa.score
-                } for qa in qa_pairs
+                }
+                for qa in qa_pairs
             ]
         }
     except HTTPException:
