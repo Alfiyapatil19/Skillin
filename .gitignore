@@ -1,0 +1,32 @@
+# Environment variables
+.env
+backend/.env
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+backend/__pycache__/
+backend/fetchers/__pycache__/
+backend/routers/__pycache__/
+backend/alembic/__pycache__/
+backend/alembic/versions/__pycache__/
+
+# Database
+# Note: backend/skillin.db is tracked as requested, but root-level database is ignored
+skillin.db
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Editor / IDE configs
+.vscode/
+backend/.vscode/
+frontend/.vscode/
+
+# System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
