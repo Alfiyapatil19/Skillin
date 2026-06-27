@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skillin | Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+      radial-gradient(circle at top left,#93c5fd,transparent 40%),
+      radial-gradient(circle at bottom right,#c4b5fd,transparent 40%),
+      #020617;
+    position: relative;
+}
+.top-brand{
+    position: fixed;
+    top: 20px;
+    left: 24px;
+    color:#93c5fd;
+    text-decoration:none;
+    font-weight:700;
+}
+.page-footer{
+    position: fixed;
+    bottom: 12px;
+    left: 0;
+    width: 100%;
+    text-align:center;
+    color:#cbd5f5;
+    font-size:12px;
+}
+.login-box{
+    width:100%;
+    max-width:420px;
+    padding:2.5rem;
+    border-radius:22px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+    border:1px solid rgba(255,255,255,0.15);
+    box-shadow:0 40px 80px rgba(0,0,0,.4);
+    color:#e5e7eb;
+}
+.login-box h1{
+    text-align:center;
+    font-size:2rem;
+    font-weight:700;
+    margin-bottom:.3rem;
+    background:linear-gradient(90deg,#60a5fa,#a78bfa);
+    
+    -webkit-text-fill-color:transparent;
+}
+.login-box p{
+    text-align:center;
+    font-size:.9rem;
+    color:#cbd5f5;
+    margin-bottom:2rem;
+}
+.input-group{
+    position:relative;
+    margin-bottom:1.6rem;
+}
+.input-group input{
+    width:100%;
+    padding:1rem .9rem;
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.25);
+    border-radius:14px;
+    color:white;
+}
+.input-group label{
+    position:absolute;
+    top:50%;
+    left:14px;
+    transform:translateY(-50%);
+    font-size:.85rem;
+    color:#cbd5f5;
+    pointer-events:none;
+    transition:.3s;
+    background:#020617;
+    padding:0 .4rem;
+}
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label{
+    top:-7px;
+    font-size:.75rem;
+    color:#60a5fa;
+}
+.forgot{
+    text-align:right;
+    font-size:.8rem;
+    margin-bottom:1.5rem;
+}
+.forgot a{
+    color:#93c5fd;
+    cursor:pointer;
+    text-decoration:none;
+}
+.login-btn{
+    width:100%;
+    padding:.9rem;
+    border:none;
+    border-radius:14px;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    background:linear-gradient(90deg,#60a5fa,#a78bfa);
+    color:#020617;
+}
+.register{
+    text-align:center;
+    font-size:.85rem;
+    margin-top:1.3rem;
+}
+.register a{
+    color:#a78bfa;
+    font-weight:600;
+    text-decoration:none;
+}
+.register a:hover{
+    text-decoration:underline;
+}
+</style>
+</head>
+
+<body>
+<a class="top-brand" href="index.html">Skillin</a>
+
+<div class="login-box">
+
+    <h1>Welcome Back</h1>
+    <p>Login to continue your Skillin journey</p>
+
+    <div class="input-group">
+        <input type="email" id="email" placeholder=" " required>
+        <label>Email Address</label>
+    </div>
+
+    <div class="input-group">
+        <input type="password" id="password" placeholder=" " required>
+        <label>Password</label>
+    </div>
+
+    <div class="forgot">
+        <a onclick="forgotPassword()">Forgot password?</a>
+    </div>
+
+    <button class="login-btn" onclick="login()">Login</button>
+
+    <div class="register">
+        Don’t have an account?
+        <a href="regi.html">Register</a>
+    </div>
+
+</div>
+
+<script src="ui.js"></script>
+<script>
+const API_ORIGIN = window.location.hostname
+  ? `${window.location.protocol}//${window.location.hostname}:8000`
+  : "http://127.0.0.1:8000";
+const API_BASE = `${API_ORIGIN}/api`;
+
+async function login(){
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    
+    if(!email || !password) {
+        alert("Please enter both email and password.");
+        return;
+    }
+
+    try {
+        showToast("Signing you in...", "info");
+        const response = await fetch(`${API_BASE}/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: email, password: password })
+        });
+        
+        const data = await response.json();
+        
+        if(response.ok) {
+            localStorage.setItem("user_id", data.user_id);
+            localStorage.setItem("username", data.username);
+            if (data.access_token) {
+                localStorage.setItem("access_token", data.access_token);
+            }
+            showToast("Login successful", "success");
+            window.location.href = "dashboard.html";
+        } else {
+            showToast(data.detail || "Login failed", "error");
+        }
+    } catch(e) {
+        console.error(e);
+        showToast("An error occurred while connecting to the server.", "error");
+    }
+}
+
+function forgotPassword(){
+    showToast("Forgot password feature will be added later", "info");
+}
+
+function showToast(message, type = "info") {
+    if (window.UI) {
+        window.UI.toast(message, type);
+        return;
+    }
+}
+</script>
+
+<div class="page-footer">Skillin © 2026</div>
+</body>
+</html>

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Profile | Skillin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .profile-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+            padding: 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='20' cy='20' r='2' fill='rgba(255,255,255,0.2)'/%3E%3Ccircle cx='80' cy='80' r='1.5' fill='rgba(255,255,255,0.15)'/%3E%3C/svg%3E");
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        #avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.9);
+            object-fit: cover;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        #avatar:hover {
+            transform: scale(1.05);
+            border-color: white;
+        }
+
+        .camera-icon {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: #10b981;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .camera-icon:hover {
+            background: #059669;
+            transform: scale(1.1);
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .profile-subtitle {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .profile-content {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 30px;
+            padding: 40px;
+            min-height: 500px;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-input.valid {
+            border-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .save-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
+        }
+
+        .save-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .save-btn.loading::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            margin-left: 10px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-section {
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .progress-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 25px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            color: #374151;
+            margin-right: 15px;
+            min-width: 120px;
+        }
+
+        .progress-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: conic-gradient(#10b981 0deg, #e5e7eb 0deg);
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .progress-circle::after {
+            content: '';
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-text {
+            position: absolute;
+            font-weight: 700;
+            font-size: 14px;
+            color: #10b981;
+            z-index: 1;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            transform: translateX(350px);
+            transition: all 0.4s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .notification.error {
+            background: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .profile-content {
+                grid-template-columns: 1fr;
+                gap: 25px;
+                padding: 25px;
+            }
+            
+            .profile-header {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-wrapper">
+        <div class="profile-card">
+            <!-- Header -->
+            <div class="profile-header">
+                <div class="avatar-container">
+                    <img id="avatar" src="https://via.placeholder.com/110/f8fafc/6b7280?text=👤" alt="Profile Photo">
+                    <div class="camera-icon">
+                        <i class="fas fa-camera"></i>
+                        <input type="file" id="photoInput" accept="image/*" hidden>
+                    </div>
+                </div>
+                <h1 class="profile-name" id="profileName">Complete Your Profile</h1>
+                <p class="profile-subtitle">Fill your details to showcase your skills</p>
+            </div>
+
+            <!-- Content -->
+            <div class="profile-content">
+                <!-- Form -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-edit" style="color: #4f46e5; margin-right: 10px;"></i>
+                        Profile Details
+                    </h2>
+
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input class="form-input" id="username" placeholder="Enter your full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" id="email" placeholder="your.email@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Education</label>
+                            <input class="form-input" id="education" placeholder="B.Tech Computer Science">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">College</label>
+                            <input class="form-input" id="college_name" placeholder="Your College Name">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Graduation Year</label>
+                            <input type="number" min="2020" max="2030" class="form-input" id="graduation_year" placeholder="2026">
+                        </div>
+
+                        <div class="progress-circle" id="progressCircle">
+                            <span class="progress-text" id="progressText">0%</span>
+                        </div>
+
+                        <button type="submit" class="save-btn" id="saveBtn">
+                            <i class="fas fa-save"></i> Save Profile
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Progress Sidebar -->
+                <div class="progress-section">
+                    <h3 class="progress-title">Profile Completion</h3>
+                    
+                    <div class="progress-item">
+                        <span class="progress-label">Photo</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="photoProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <span class="progress-label">Basic Info</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="basicProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <span class="progress-label">Education</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="eduProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_ORIGIN = `${window.location.protocol}//${window.location.hostname}:8000`;
+        const API = `${API_ORIGIN}/profile`;
+        const USER_ID = Number(localStorage.getItem("user_id")) || 1;
+        const fields = ["username", "email", "education", "college_name", "graduation_year"];
+
+        const elements = {
+            avatar: document.getElementById('avatar'),
+            photoInput: document.getElementById('photoInput'),
+            form: document.getElementById('profileForm'),
+            saveBtn: document.getElementById('saveBtn'),
+            profileName: document.getElementById('profileName')
+        };
+
+        // Photo upload
+        document.querySelector('.camera-icon').addEventListener('click', (e) => {
+            e.stopPropagation();
+            elements.photoInput.click();
+        });
+
+        elements.avatar.addEventListener('click', () => {
+            elements.photoInput.click();
+        });
+
+        elements.photoInput.onchange = async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            setLoading(true);
+
+            try {
+                const res = await fetch(`${API}/${USER_ID}/photo`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    elements.avatar.src = `${API_ORIGIN}/${data.photo_url}`;
+                    updatePhotoProgress(100);
+                    showNotification('Photo uploaded successfully! ✅', 'success');
+                }
+            } catch (e) {
+                showNotification('Upload failed!', 'error');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        // Load profile
+        window.onload = async () => {
+            try {
+                const res = await fetch(`${API}/${USER_ID}`);
+                const data = await res.json();
+
+                fields.forEach(id => {
+                    const el = document.getElementById(id);
+                    el.value = data[id] || '';
+                    if (data[id]) el.classList.add('valid');
+                });
+
+                if (data.photo) {
+                    elements.avatar.src = `${API_ORIGIN}/${data.photo}`;
+                    updatePhotoProgress(100);
+                }
+
+                elements.profileName.textContent = data.username || 'Complete Your Profile';
+                updateProgress();
+            } catch (e) {
+                updateProgress();
+            }
+        };
+
+        // Save profile
+        elements.form.onsubmit = async (e) => {
+            e.preventDefault();
+
+            const payload = {};
+            fields.forEach(id => {
+                payload[id] = document.getElementById(id).value;
+            });
+
+            setLoading(true);
+
+            try {
+                const res = await fetch(`${API}/${USER_ID}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    elements.profileName.textContent = payload.username || 'Student Profile';
+                    fields.forEach(id => {
+                        if (payload[id]) document.getElementById(id).classList.add('valid');
+                    });
+                    updateProgress();
+                    showNotification('Profile saved successfully! 🎉', 'success');
+                }
+            } catch (e) {
+                showNotification('Save failed!', 'error');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        function updateProgress() {
+            let filled = 0;
+            fields.forEach(id => {
+                if (document.getElementById(id).value.trim()) filled++;
+            });
+
+            const percent = Math.round((filled / fields.length) * 100);
+            const angle = percent * 3.6;
+
+            document.getElementById('progressCircle').style.background = 
+                `conic-gradient(#10b981 0deg, #10b981 ${angle}deg, #e5e7eb ${angle}deg)`;
+            document.getElementById('progressText').textContent = percent + '%';
+
+            document.getElementById('basicProgress').style.width = percent + '%';
+            document.getElementById('eduProgress').style.width = percent + '%';
+        }
+
+        function updatePhotoProgress(percent) {
+            document.getElementById('photoProgress').style.width = percent + '%';
+        }
+
+        function setLoading(loading) {
+            const btn = elements.saveBtn;
+            btn.disabled = loading;
+            if (loading) {
+                btn.classList.add('loading');
+            } else {
+                btn.classList.remove('loading');
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Profile';
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(350px)';
+                setTimeout(() => notification.remove(), 400);
+            }, 3000);
+        }
+
+        // Real-time updates
+        fields.forEach(id => {
+            document.getElementById(id).addEventListener('input', updateProgress);
+        });
+    </script>
+</body>
+</html>

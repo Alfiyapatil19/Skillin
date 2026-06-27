@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Opportunities | Skillin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
+body { background: linear-gradient(135deg,#f1f5f9 0%,#e2e8f0 25%,#f8fafc 50%,#f0f9ff 75%,#f0fdf4 100%); background-size:300% 300%; animation:gradientShift 18s ease infinite; color:#1e293b; min-height:100vh; position:relative; overflow-x:hidden;}
+@keyframes gradientShift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+
+.sidebar{width:260px; background:rgba(255,255,255,0.97); backdrop-filter:blur(25px); border-right:1px solid rgba(59,130,246,0.2); padding:35px 24px; flex-shrink:0; border-radius:0 24px 24px 0; box-shadow:6px 0 35px rgba(59,130,246,0.15); position:fixed; height:100vh; overflow-y:auto; z-index:100; left:0; top:0;}
+.sidebar h2{font-size:28px; margin-bottom:55px; display:flex; align-items:center; gap:12px; background:linear-gradient(135deg,#3b82f6,#60a5fa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:800;}
+.sidebar a{display:flex; align-items:center; gap:12px; color:#475569; text-decoration:none; padding:14px 18px; border-radius:16px; margin-bottom:10px; font-weight:600; transition:all 0.3s; cursor:pointer;}
+.sidebar a.active, .sidebar a:hover{background:linear-gradient(135deg,#3b82f6,#60a5fa); color:#fff; transform:translateX(6px) scale(1.02); box-shadow:0 6px 20px rgba(59,130,246,0.3);}
+
+.main-container{margin-left:260px; padding:45px 55px; min-height:100vh;}
+.header{display:flex; justify-content:space-between; align-items:center; margin-bottom:45px;}
+.header h1{font-size:36px; font-weight:800; background:linear-gradient(135deg,#1e40af,#3b82f6,#60a5fa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:-0.02em;}
+.filters{display:flex; gap:16px; margin-bottom:35px; flex-wrap:wrap; align-items:center;}
+.filter-select{padding:12px 20px; border:2px solid rgba(59,130,246,0.2); border-radius:12px; background:rgba(255,255,255,0.9); font-weight:500; cursor:pointer; font-family:inherit; backdrop-filter: blur(10px); min-width:180px;}
+.opportunity-section{margin-bottom:40px;}
+.opportunity-section h2{font-size:24px; font-weight:700; color:#1e293b; margin-bottom:20px;}
+.opportunities-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(380px,1fr)); gap:28px;}
+.opportunity-card{background:rgba(255,255,255,0.95); backdrop-filter:blur(20px); padding:28px; border-radius:20px; box-shadow:0 10px 35px rgba(0,0,0,0.08); transition:all 0.4s; border:1px solid rgba(59,130,246,0.12); position:relative; overflow:hidden;}
+.opp-badge{position:absolute; top:20px; right:20px; background:linear-gradient(135deg,#f59e0b,#fbbf24); color:white; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:700;}
+.opp-title{font-size:20px; font-weight:700; color:#1e293b; margin-bottom:12px; line-height:1.4;}
+.opp-company{color:#3b82f6; font-weight:600; font-size:15px; margin-bottom:8px;}
+.opp-details{color:#64748b; font-size:14px; margin-bottom:16px; line-height:1.6;}
+.opp-deadline{color:#ef4444; font-weight:600; font-size:13px; margin-bottom:20px;}
+.opp-actions{display:flex; gap:12px;}
+.btn-apply{flex:1; background:linear-gradient(135deg,#10b981,#34d399); color:white; border:none; padding:12px 20px; border-radius:10px; font-weight:600; cursor:pointer; transition: all 0.3s ease;}
+.btn-apply:hover{transform:scale(1.05) translateY(-2px); box-shadow:0 8px 25px rgba(16,185,129,0.4);}
+.btn-save{background:linear-gradient(135deg,#3b82f6,#60a5fa); color:white; border:none; padding:12px 16px; border-radius:10px; font-size:14px; cursor:pointer; transition: all 0.3s ease; width:48px;}
+.btn-save:hover{transform:scale(1.05); box-shadow:0 8px 25px rgba(59,130,246,0.4);}
+.btn-save.saved{background:linear-gradient(135deg,#ef4444,#dc2626);}
+
+@media(max-width:768px){.sidebar{transform:translateX(-100%);transition:transform 0.3s ease;}.sidebar.active{transform:translateX(0);}.main-container{margin-left:0;padding:25px 20px;}.opportunities-grid{grid-template-columns:1fr; gap:20px;}.header h1{font-size:28px;}.filter-select{min-width:100%;}}
+</style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+<h2>
+<img src="https://cdn-icons-png.flaticon.com/512/5462/5462089.png" alt="Skillin Logo" width="40" height="40"/>
+Skillin
+</h2>
+<a onclick="showDashboard()"><i class="fas fa-home"></i> Dashboard</a>
+<a onclick="showMissions()"><i class="fas fa-bullseye"></i> Skill Missions</a>
+<a onclick="showAI()"><i class="fas fa-robot"></i> AI Mentor</a>
+<a class="active" onclick="showOpportunities()"><i class="fas fa-briefcase"></i> Opportunities</a>
+<a onclick="showProfile()"><i class="fas fa-user"></i> Profile</a>
+</div>
+
+<button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" style="position:fixed; top:20px; left:20px; z-index:101; background:linear-gradient(135deg,#3b82f6,#60a5fa); color:white; border:none; padding:12px; border-radius:12px; font-size:18px; cursor:pointer; display:none;"><i class="fas fa-bars"></i></button>
+
+<div class="main-container">
+<div class="header">
+<h1><i class="fas fa-briefcase"></i> Opportunities Hub</h1>
+<div style="font-size:18px; color:#64748b;"><i class="fas fa-clock"></i> Updated just now</div>
+</div>
+
+<div class="filters">
+<select id="typeFilter" class="filter-select" onchange="filterOpportunities()">
+<option value="all">All Types</option>
+<option value="internship">Internships</option>
+<option value="hackathon">Hackathons</option>
+<option value="job">Full-time Jobs</option>
+<option value="workshop">Workshops</option>
+</select>
+<input type="text" id="searchInput" class="filter-select" placeholder="🔍 Search opportunities..." onkeyup="filterOpportunities()">
+</div>
+
+<div id="opportunitySections">
+<!-- JS will populate sections here -->
+</div>
+</div>
+
+<script src="ui.js"></script>
+<script>
+let opportunities = [];
+let filteredData = [];
+const API_ORIGIN = window.location.hostname
+  ? `${window.location.protocol}//${window.location.hostname}:8000`
+  : "http://127.0.0.1:8000";
+const API_BASE = `${API_ORIGIN}/api`;
+
+// Fetch opportunities from backend
+async function fetchOpportunities(){
+  try{
+    document.getElementById('opportunitySections').innerHTML = `
+      <div class="opportunities-grid">
+        <div class="opportunity-card" style="opacity:.6;min-height:140px;">Loading opportunities...</div>
+        <div class="opportunity-card" style="opacity:.6;min-height:140px;">Loading opportunities...</div>
+      </div>
+    `;
+    const res = await fetch(`${API_BASE}/opportunities/all`);
+    opportunities = await res.json();
+    filteredData = [...opportunities];
+    renderSections();
+  }catch(err){
+    console.error("Failed to fetch opportunities:", err);
+    showToast("Failed to fetch opportunities", "error");
+  }
+}
+
+// Render opportunities by type sections
+function renderSections(){
+  const container = document.getElementById('opportunitySections');
+  const types = ['job','internship','hackathon','workshop'];
+  container.innerHTML = '';
+
+  types.forEach(type=>{
+    const typeOpps = filteredData.filter(o => o.type.toLowerCase()===type);
+    if(typeOpps.length>0){
+      const section = document.createElement('div');
+      section.className='opportunity-section';
+      section.innerHTML = `<h2>${type.charAt(0).toUpperCase()+type.slice(1)}s</h2><div class="opportunities-grid">${typeOpps.map(o=>`
+        <div class="opportunity-card">
+          <div class="opp-badge">${o.type.toUpperCase()}</div>
+          <div class="opp-title">${o.title}</div>
+          <div class="opp-company"><i class="fas fa-building"></i> ${o.company}</div>
+          <div class="opp-details">${o.description||''}</div>
+          <div class="opp-deadline"><i class="fas fa-clock"></i> ${o.deadline||'N/A'} ${o.stipend?` | ${o.stipend}`:''}</div>
+          <div class="opp-actions">
+            <button class="btn-apply" onclick="applyNow(${o.id})"><i class="fas fa-rocket"></i> Apply Now</button>
+            <button class="btn-save" onclick="saveOpportunity(${o.id}, event)"><i class="fas fa-heart"></i></button>
+          </div>
+        </div>
+      `).join('')}</div>`;
+      container.appendChild(section);
+    }
+  });
+}
+
+// Filter opportunities
+function filterOpportunities(){
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const typeFilter = document.getElementById('typeFilter').value;
+
+  filteredData = opportunities.filter(o=>{
+    const matchesType = typeFilter==='all'||o.type.toLowerCase()===typeFilter;
+    const matchesSearch = !search||o.title.toLowerCase().includes(search)||o.company.toLowerCase().includes(search);
+    return matchesType && matchesSearch;
+  });
+
+  renderSections();
+}
+
+// Actions
+function applyNow(id){
+  const opp = opportunities.find(o=>o.id===id);
+  if(opp) showToast(`Applying to "${opp.title}"`, "success");
+}
+function saveOpportunity(id,event){
+  const btn=event.target.closest('button');
+  btn.classList.add('saved'); btn.innerHTML='<i class="fas fa-heart"></i>';
+  showToast("Opportunity saved to bookmarks", "success");
+}
+
+// Navigation & sidebar
+function showDashboard(){window.location.href='dashboard.html';}
+function showMissions(){window.location.href='missions.html';}
+function showAI(){window.location.href='dashboard.html';}
+function showOpportunities(){window.location.href='opportunities.html';}
+function showProfile(){window.location.href='student-profile.html';}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('active');
+  document.getElementById('mobileMenuBtn').innerHTML=document.getElementById('sidebar').classList.contains('active')?'<i class="fas fa-times"></i>':'<i class="fas fa-bars"></i>';
+}
+
+// Init
+window.onload = ()=>{
+  fetchOpportunities();
+  if(window.innerWidth<=768) document.getElementById('mobileMenuBtn').style.display='block';
+  document.addEventListener('click', (e)=>{
+    if(window.innerWidth<=768 && !e.target.closest('.sidebar') && !e.target.closest('#mobileMenuBtn')){
+      document.getElementById('sidebar').classList.remove('active');
+    }
+  });
+};
+
+function showToast(message, type = "info") {
+  if (window.UI) {
+    window.UI.toast(message, type);
+    return;
+  }
+}
+</script>
+</body>
+</html>

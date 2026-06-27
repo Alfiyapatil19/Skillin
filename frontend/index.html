@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Skillin | Master Your Interview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  
+  <style>
+    /* Specific Landing Page Styles */
+    body {
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    
+    .navbar {
+      width: 100%;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .navbar-brand {
+      font-size: 28px;
+      font-weight: 800;
+      font-family: var(--font-heading);
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .hero-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 160px 40px 80px;
+      min-height: 80vh;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    .hero-title {
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      max-width: 800px;
+    }
+
+    .hero-subtitle {
+      font-size: 20px;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+    }
+
+    .btn-large {
+      padding: 16px 36px;
+      font-size: 18px;
+      border-radius: 50px;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--accent-primary);
+      color: var(--text-primary);
+    }
+    
+    .btn-outline:hover {
+      background: var(--accent-primary);
+      color: #fff;
+    }
+
+    .features-section {
+      padding: 80px 50px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 40px;
+      margin-bottom: 60px;
+      color: var(--text-primary);
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Floating Abstract Shapes */
+    .shape-1, .shape-2 {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      z-index: -1;
+      animation: float 20s infinite;
+    }
+    .shape-1 {
+      width: 400px; height: 400px;
+      background: rgba(59, 130, 246, 0.3);
+      top: 10%; left: -100px;
+    }
+    .shape-2 {
+      width: 500px; height: 500px;
+      background: rgba(139, 92, 246, 0.2);
+      bottom: -100px; right: -100px;
+      animation-delay: 2s;
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- Abstract Background Elements -->
+  <div class="shape-1"></div>
+  <div class="shape-2"></div>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <i class="fas fa-brain"></i> Skillin
+    </div>
+    <div class="navbar-links">
+      <button class="theme-toggle-btn" onclick="toggleTheme()">
+        <i class="fas fa-moon"></i>
+      </button>
+      <a href="login.html" class="btn btn-outline" style="text-decoration:none;">Log In</a>
+      <a href="regi.html" class="btn btn-primary" style="text-decoration:none;">Sign Up Free</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <main class="hero-container">
+    <h1 class="hero-title">Master Your Next Interview with AI.</h1>
+    <p class="hero-subtitle">Interactive voice mock interviews, curated video courses, and real-time job opportunities perfectly aligned with your skill progression.</p>
+    
+    <div class="hero-buttons">
+      <a href="regi.html" class="btn btn-primary btn-large" style="text-decoration:none;">
+        Get Started <i class="fas fa-arrow-right"></i>
+      </a>
+      <a href="dashboard.html" class="btn btn-outline btn-large" style="text-decoration:none;">
+        View Demo
+      </a>
+    </div>
+  </main>
+
+  <!-- Feature Highlights -->
+  <section class="features-section">
+    <h2 class="section-title">Everything you need to get hired</h2>
+    <div class="grid-cards" style="margin-bottom:32px;" id="liveStats">
+      <div class="card"><h3>Live Opportunities</h3><p id="statOpps">Loading...</p></div>
+      <div class="card"><h3>Today's Fresh Posts</h3><p id="statToday">Loading...</p></div>
+      <div class="card"><h3>Active Missions</h3><p id="statMissions">Loading...</p></div>
+    </div>
+    <div class="grid-cards-large">
+      
+      <!-- Feature Card 1 -->
+      <div class="card">
+        <div style="font-size: 40px; color: var(--accent-primary); margin-bottom: 20px;">
+          <i class="fas fa-microphone-alt"></i>
+        </div>
+        <h3 style="font-size: 24px; margin-bottom: 12px;">Voice AI Mentor</h3>
+        <p style="font-size: 16px; line-height: 1.6;">Engage in realistic voice-based mock interviews powered by locally run, highly-intelligent LLMs. Receive instant feedback and scoring.</p>
+      </div>
+
+      <!-- Feature Card 2 -->
+      <div class="card">
+        <div style="font-size: 40px; color: var(--accent-success); margin-bottom: 20px;">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <h3 style="font-size: 24px; margin-bottom: 12px;">Curated Learning</h3>
+        <p style="font-size: 16px; line-height: 1.6;">Access specifically tailored YouTube playlists and guided missions that bridge the exact skill gaps preventing you from landing the job.</p>
+      </div>
+
+      <!-- Feature Card 3 -->
+      <div class="card">
+        <div style="font-size: 40px; color: var(--accent-warning); margin-bottom: 20px;">
+          <i class="fas fa-briefcase"></i>
+        </div>
+        <h3 style="font-size: 24px; margin-bottom: 12px;">Opportunity Hub</h3>
+        <p style="font-size: 16px; line-height: 1.6;">Browse live, curated internship and full-time job opportunities that mathematically align with your Skillin progression score.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    const API_ORIGIN = window.location.hostname
+      ? `${window.location.protocol}//${window.location.hostname}:8000`
+      : "http://127.0.0.1:8000";
+    const API_BASE = `${API_ORIGIN}/api`;
+
+    // Theme logic
+    function toggleTheme() {
+        const root = document.documentElement;
+        let isDark = false;
+        
+        // Check current body state instead of root attribute if root isn't fully synced
+        if (document.body.getAttribute('data-theme') === 'dark' || root.getAttribute('data-theme') === 'dark') {
+            isDark = true;
+        }
+
+        const newTheme = isDark ? 'light' : 'dark';
+        root.setAttribute('data-theme', newTheme);
+        document.body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+    
+    // Init theme
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark mode for landing page
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.body.setAttribute('data-theme', savedTheme);
+        loadLiveStats();
+    });
+
+    async function loadLiveStats() {
+      try {
+        const [countRes, missionsRes] = await Promise.all([
+          fetch(`${API_BASE}/opportunities/count`),
+          fetch(`${API_BASE}/dashboard/missions`)
+        ]);
+
+        const countData = await countRes.json();
+        const missionsData = await missionsRes.json();
+
+        document.getElementById("statOpps").textContent = countData.total ?? 0;
+        document.getElementById("statToday").textContent = countData.today ?? 0;
+        document.getElementById("statMissions").textContent = missionsData.missions?.length ?? 0;
+      } catch (e) {
+        document.getElementById("statOpps").textContent = "Unavailable";
+        document.getElementById("statToday").textContent = "Unavailable";
+        document.getElementById("statMissions").textContent = "Unavailable";
+      }
+    }
+  </script>
+</body>
+</html>

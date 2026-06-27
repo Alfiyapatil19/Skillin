@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skillin | Sign Up</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+
+/* BACKGROUND */
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+      radial-gradient(circle at top left,#93c5fd,transparent 40%),
+      radial-gradient(circle at bottom right,#c4b5fd,transparent 40%),
+      #020617;
+    color:#e5e7eb;
+    position: relative;
+}
+.top-brand{
+    position: fixed;
+    top: 20px;
+    left: 24px;
+    color:#93c5fd;
+    text-decoration:none;
+    font-weight:700;
+}
+.page-footer{
+    position: fixed;
+    bottom: 12px;
+    left: 0;
+    width: 100%;
+    text-align:center;
+    color:#cbd5f5;
+    font-size:12px;
+}
+
+/* CARD */
+.signup-box{
+    width:100%;
+    max-width:460px;
+    padding:2.5rem;
+    border-radius:24px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter: blur(18px);
+    border:1px solid rgba(255,255,255,0.15);
+    box-shadow:0 40px 80px rgba(0,0,0,.45);
+}
+
+/* TITLE */
+.signup-box h1{
+    text-align:center;
+    font-size:2rem;
+    font-weight:700;
+    margin-bottom:.4rem;
+    background:linear-gradient(90deg,#60a5fa,#a78bfa);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+.signup-box p{
+    text-align:center;
+    font-size:.9rem;
+    color:#cbd5f5;
+    margin-bottom:1.8rem;
+}
+
+/* PROGRESS */
+.progress{
+    width:100%;
+    height:6px;
+    background:rgba(255,255,255,.2);
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:1.8rem;
+}
+.progress-bar{
+    height:100%;
+    width:25%;
+    background:linear-gradient(90deg,#60a5fa,#a78bfa);
+    transition:.4s;
+}
+
+/* STEPS */
+.step{
+    display:none;
+    animation:fade .5s ease;
+}
+.step.active{
+    display:block;
+}
+
+/* INPUT */
+.input-group{
+    position:relative;
+    margin-bottom:1.4rem;
+}
+.input-group input,
+.input-group select{
+    width:100%;
+    padding:1rem .9rem;
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.25);
+    border-radius:14px;
+    color:white;
+    font-size:.95rem;
+}
+.input-group select{
+    color:#e5e7eb;
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+}
+.input-group input:focus,
+.input-group select:focus{
+    outline:none;
+    border-color:#60a5fa;
+    box-shadow:0 0 15px rgba(96,165,250,.4);
+}
+.step-buttons{
+    display:flex;
+    gap:0.9rem;
+    margin-bottom:1rem;
+}
+.step-buttons button{
+    flex:1;
+    width:auto;
+}
+button.btn-secondary{
+    background:rgba(255,255,255,0.12);
+    color:#e5e7eb;
+}
+@media(max-width:480px){
+    .signup-box{
+        padding:1.6rem;
+        margin:16px;
+    }
+    .step-buttons{
+        flex-direction:column;
+    }
+}
+
+/* LABEL */
+.input-group label{
+    position:absolute;
+    top:-9px;
+    left:14px;
+    font-size:.75rem;
+    padding:0 .4rem;
+    background:#020617;
+    color:#93c5fd;
+}
+
+/* BUTTON */
+button{
+    width:100%;
+    padding:.9rem;
+    border:none;
+    border-radius:14px;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    background:linear-gradient(90deg,#60a5fa,#a78bfa);
+    color:#020617;
+    transition:.3s;
+}
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 30px rgba(96,165,250,.6);
+}
+
+/* HELPER */
+.helper{
+    text-align:center;
+    font-size:.8rem;
+    color:#cbd5f5;
+    margin-top:.5rem;
+}
+
+/* LOGIN LINK */
+.login-link{
+    text-align:center;
+    font-size:.85rem;
+    margin-top:1.6rem;
+}
+.login-link a{
+    color:#a78bfa;
+    font-weight:600;
+    text-decoration:none;
+}
+.login-link a:hover{
+    text-decoration:underline;
+}
+
+/* ANIMATION */
+@keyframes fade{
+    from{opacity:0;transform:translateY(15px);}
+    to{opacity:1;transform:translateY(0);}
+}
+</style>
+</head>
+
+<body>
+<a class="top-brand" href="index.html">Skillin</a>
+
+<div class="signup-box">
+
+    <h1>Create Account</h1>
+    <p>Start your Skillin journey</p>
+
+    <div class="progress">
+        <div class="progress-bar" id="progressBar" style="width: 25%;"></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step active" id="step1">
+            <div class="input-group">
+            <input type="text" id="fullName" placeholder=" " required>
+            <label>Full Name</label>
+        </div>
+
+        <div class="input-group">
+            <select id="education">
+                <option value="" disabled selected>Select education</option>
+                <option value="Diploma">Diploma</option>
+                <option value="BE / BTech">BE / BTech</option>
+                <option value="BSc / BCA">BSc / BCA</option>
+                <option value="Other">Other</option>
+            </select>
+            <label>Education</label>
+        </div>
+
+        <div class="step-buttons">
+            <button type="button" class="btn-secondary" onclick="prevStep()">Back</button>
+            <button onclick="nextStep()">Continue</button>
+        </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" id="step2">
+        <div class="input-group">
+            <input type="email" id="email" name="email" placeholder=" " required>
+            <label>Email Address</label>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="password" name="password" placeholder=" " required>
+            <label>Password</label>
+        </div>
+
+        <div class="step-buttons">
+            <button type="button" class="btn-secondary" onclick="prevStep()">Back</button>
+            <button type="button" onclick="nextStep()">Send Verification Code</button>
+        </div>
+        <div class="helper">OTP will be sent to email (dummy)</div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step" id="step3">
+        <div class="input-group">
+            <input type="text" id="otp" name="otp" placeholder=" " required>
+            <label>Verification Code</label>
+        </div>
+
+        <div class="step-buttons">
+            <button type="button" class="btn-secondary" onclick="prevStep()">Back</button>
+            <button onclick="nextStep()">Verify Code</button>
+        </div>
+        <div class="helper">Use any 6 digits</div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step" id="step4">
+        <div class="input-group">
+            <input type="text" id="collegeName" name="college_name" placeholder=" " required>
+            <label>College / University</label>
+        </div>
+
+        <div class="input-group">
+            <input type="number" id="graduationYear" name="graduation_year" placeholder=" " required min="1900" max="2100">
+            <label>Graduation Year</label>
+        </div>
+
+        <div class="step-buttons">
+            <button type="button" class="btn-secondary" onclick="prevStep()">Back</button>
+            <button onclick="finish()">Finish Signup</button>
+        </div>
+    </div>
+
+    <div class="login-link">
+        Already have an account? <a href="login.html">Login</a>
+    </div>
+
+</div>
+
+<script src="ui.js"></script>
+<script>
+let step = 1;
+const totalSteps = 4;
+const API_ORIGIN = window.location.hostname
+  ? `${window.location.protocol}//${window.location.hostname}:8000`
+  : "http://127.0.0.1:8000";
+const API_BASE = `${API_ORIGIN}/api`;
+
+const formData = {
+    username: "",
+    education: "",
+    email: "",
+    password: "",
+    college_name: "",
+    graduation_year: null
+};
+
+function nextStep(){
+    if (step === 1) {
+        formData.username = document.getElementById("fullName").value.trim();
+        formData.education = document.getElementById("education").value;
+        if (!formData.username || !formData.education) {
+            alert("Please fill name and education.");
+            return;
+        }
+    }
+    if (step === 2) {
+        formData.email = document.getElementById("email").value.trim();
+        formData.password = document.getElementById("password").value;
+        const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+        if (!formData.email || !formData.password || !strongPassword.test(formData.password)) {
+            alert("Password must be 8+ chars and include uppercase, lowercase, number, and special character.");
+            return;
+        }
+    }
+    if (step === 3) {
+        const otp = document.getElementById("otp").value.trim();
+        if (otp.length < 4) {
+            alert("Enter verification code.");
+            return;
+        }
+    }
+
+    document.getElementById("step"+step).classList.remove("active");
+    step++;
+    document.getElementById("step"+step).classList.add("active");
+    document.getElementById("progressBar").style.width =
+        (step / totalSteps) * 100 + "%";
+}
+
+function prevStep(){
+    if(step <= 1) return;
+    document.getElementById("step"+step).classList.remove("active");
+    step--;
+    document.getElementById("step"+step).classList.add("active");
+    document.getElementById("progressBar").style.width =
+        (step / totalSteps) * 100 + "%";
+}
+
+async function finish(){
+    const finishBtn = document.querySelector("#step4 button");
+    formData.college_name = document.getElementById("collegeName").value.trim();
+    const graduationYear = document.getElementById("graduationYear").value.trim();
+    formData.graduation_year = graduationYear ? Number(graduationYear) : null;
+
+    if (!formData.college_name || !formData.graduation_year) {
+        alert("Please enter your college/university and graduation year.");
+        return;
+    }
+
+    try {
+        if (window.UI) window.UI.setLoading(finishBtn, "Creating account...");
+        showToast("Creating your account...", "info");
+        const res = await fetch(`${API_BASE}/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: formData.username,
+                email: formData.email,
+                password: formData.password,
+                education: formData.education,
+                college_name: formData.college_name,
+                graduation_year: formData.graduation_year
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            showToast(data.detail || "Registration failed", "error");
+            return;
+        }
+        showToast("Signup completed", "success");
+        window.location.href = "login.html";
+    } catch (e) {
+        showToast("Could not connect to backend.", "error");
+    } finally {
+        if (window.UI) window.UI.clearLoading(finishBtn);
+    }
+}
+
+function showToast(message, type = "info") {
+    if (window.UI) {
+        window.UI.toast(message, type);
+        return;
+    }
+}
+</script>
+
+<div class="page-footer">Skillin © 2026</div>
+</body>
+</html>

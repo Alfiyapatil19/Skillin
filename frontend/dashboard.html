@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skillin | Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/5462/5462089.png" alt="Skillin Logo"/>
+    Skillin
+  </h2>
+  <a class="active" onclick="showDashboard()"><i class="fas fa-home"></i> Dashboard</a>
+  <a onclick="showMissions()"><i class="fas fa-bullseye"></i> Skill Missions</a>
+  <a onclick="showAI()"><i class="fas fa-robot"></i> AI Mentor</a>
+  <!-- ✅ WORKING LINK -->
+  <a onclick="showOpportunities()"><i class="fas fa-briefcase"></i> Opportunities</a>
+ <a onclick="showProfile()"><i class="fas fa-user"></i> Profile</a>
+
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="top-header">
+    <h1 id="welcomeTitle">Welcome, Student 👋</h1>
+    
+  <div class="header-right" style="display:flex; align-items:center; gap:16px;">
+    <div class="score-badge" id="score">Skillin Score: 0</div>
+    <button class="theme-toggle-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+  </div>
+
+  </div>
+
+  <div class="section">
+    <h2>Skill Categories</h2>
+    <div class="grid-cards" id="categories"></div>
+  </div>
+
+  <div class="section">
+    <h2>📹 Courses & Videos</h2>
+    <div class="grid-cards-large" id="courses"></div>
+    <p id="courseStatus" style="text-align:center; color:#64748b; padding:40px;"></p>
+  </div>
+
+  <div class="section">
+    <h2>Active Skill Missions</h2>
+    <div id="missions"></div>
+  </div>
+
+  <div class="section">
+    <h2>🤖 AI Mentor Tools</h2>
+    <div class="grid-cards" id="aiTools"></div>
+  </div>
+</div>
+
+<!-- INTERVIEW MODAL -->
+<div class="modal-overlay" id="interviewModal">
+  <div class="modal-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2>🎤 Voice Interview</h2>
+      <button class="btn btn-danger btn-close" onclick="closeInterview()" style="flex: 0; min-width: auto;">✕ Close</button>
+    </div>
+    
+    <div id="interviewContent">
+      <div style="text-align: center; padding: 40px 0;">
+        <div style="font-size: 48px; margin-bottom: 20px;">🎤</div>
+        <p style="color: #64748b; margin-bottom: 24px;">Ready to test your knowledge?</p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary btn-listen" onclick="initializeInterview('beginner')" style="flex: 1; min-width: 140px; background: linear-gradient(135deg, #4CAF50, #45a049);">Beginner</button>
+          <button class="btn btn-primary btn-listen" onclick="initializeInterview('intermediate')" style="flex: 1; min-width: 140px; background: linear-gradient(135deg, #FF9800, #e68900);">Intermediate</button>
+          <button class="btn btn-primary btn-listen" onclick="initializeInterview('advanced')" style="flex: 1; min-width: 140px; background: linear-gradient(135deg, #f44336, #e53935);">Advanced</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="ui.js"></script>
+<script>
+// ========== BACKEND API CONFIGURATION ==========
+const API_ORIGIN = window.location.hostname
+  ? `${window.location.protocol}//${window.location.hostname}:8000`
+  : "http://127.0.0.1:8000";
+const API_BASE = `${API_ORIGIN}/api`;
+const INTERVIEW_API = `${API_BASE}/interview`;
+function getAuthHeaders(extra = {}) {
+  const token = localStorage.getItem("access_token");
+  const headers = { ...extra };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+// ========== CATEGORIES DATA ==========
+const categories = [
+  {name:"Python", icon:"fab fa-python", color:"#3776AB"},
+  {name:"Java", icon:"fab fa-java", color:"#007396"},
+  {name:"Aptitude", icon:"fas fa-brain", color:"#FFD700"},
+  {name:"Web Development", icon:"fas fa-code", color:"#4CAF50"},
+  {name:"Frontend Developer", icon:"fas fa-laptop-code", color:"#FF9800"},
+  {name:"Backend Developer", icon:"fas fa-server", color:"#2196F3"},
+  {name:"Cloud Computing", icon:"fas fa-cloud", color:"#03A9F4"},
+  {name:"Cyber Security", icon:"fas fa-shield-alt", color:"#E91E63"},
+  {name:"Data Analytics", icon:"fas fa-chart-bar", color:"#9C27B0"},
+  {name:"Data Science", icon:"fas fa-microscope", color:"#00BCD4"}
+];
+
+
+// Dark mode toggle
+function toggleTheme() {
+    const root = document.documentElement;
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+}
+// Init theme
+if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+}
+
+// ========== GLOBAL VARIABLES ==========
+let currentInterviewId = null;
+let currentQuestionId = null;
+let interviewSkill = null;
+let recognitionRef = null;
+let synthRef = null;
+let isListening = false;
+let transcript = '';
+
+// ========== LOAD CATEGORIES ==========
+function loadCategories(){
+  const box = document.getElementById("categories");
+  box.innerHTML = "";
+  categories.forEach(cat=>{
+    box.innerHTML += `
+      <div class="card" onclick="loadCourses('${cat.name.toLowerCase()}')" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px;">
+        <div class="category-icon-wrapper" style="font-size: 42px; margin-bottom: 16px; color: ${cat.color}; display: flex; align-items: center; justify-content: center; height: 60px; transition: transform 0.3s ease;">
+          <i class="${cat.icon}"></i>
+        </div>
+        <h3 style="margin-bottom: 8px;">${cat.name}</h3>
+        <p style="font-size: 13px; color: var(--text-secondary);">Click to explore courses</p>
+      </div>
+    `;
+  });
+}
+
+// ========== LOAD COURSES & VIDEOS ==========
+async function loadCourses(skill){
+  const statusEl = document.getElementById("courseStatus");
+  const coursesBox = document.getElementById("courses");
+  
+  try{
+    statusEl.innerHTML = '<p>🔄 Loading videos...</p>';
+    coursesBox.innerHTML = `
+      <div class="card course-card" style="min-height:160px;opacity:.6;">Loading...</div>
+      <div class="card course-card" style="min-height:160px;opacity:.6;">Loading...</div>
+    `;
+    const res = await fetch(`${API_BASE}/dashboard/courses/${skill}`);
+    const data = await res.json();
+    
+    if(!data.success || !data.videos || data.videos.length === 0){
+      statusEl.innerHTML = '<p style="color:#f44336;">⚠️ No videos found. Try another skill.</p>';
+      coursesBox.innerHTML = "";
+      return;
+    }
+
+    coursesBox.innerHTML = "";
+    statusEl.innerHTML = '';
+    
+    data.videos.forEach(video => {
+      coursesBox.innerHTML += `
+        <div class="card course-card">
+          <img class="course-thumbnail" src="${video.thumbnail}" alt="${video.title}">
+          <div class="course-info">
+            <h4>${video.title}</h4>
+            <small>📺 ${video.channel}</small>
+            <p>High-quality educational content</p>
+            <div class="course-actions">
+              <button onclick="window.open('${video.embed_url}', '_blank')">
+                <i class="fas fa-play"></i> Watch
+              </button>
+              <button onclick="markDone(this)">
+                <i class="fas fa-check"></i> Done
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  }catch(e){
+    console.error('Error loading courses:', e);
+    statusEl.innerHTML = '<p style="color:#f44336;">❌ Error loading videos. Please try again.</p>';
+    coursesBox.innerHTML = "";
+  }
+}
+
+// ========== MARK COURSE AS DONE ==========
+function markDone(btn){
+  btn.innerHTML = "<i class='fas fa-check-circle'></i> Completed";
+  btn.style.background = "linear-gradient(135deg, #22c55e, #16a34a)";
+  btn.style.boxShadow = "0 4px 12px rgba(34,197,94,0.3)";
+}
+
+// ========== LOAD MISSIONS ==========
+async function loadMissions(){
+  try {
+    document.getElementById("missions").innerHTML = '<div class="card mission" style="justify-content:center;"><p style="color:#64748b;">Loading missions...</p></div>';
+    const res = await fetch(`${API_BASE}/dashboard/missions`);
+    const data = await res.json();
+    const box = document.getElementById("missions");
+    box.innerHTML = "";
+    
+    if(!data.missions || data.missions.length === 0){
+      box.innerHTML = '<div class="card mission" style="justify-content:center;"><p style="color:#64748b;">📌 No active missions yet</p></div>';
+      return;
+    }
+
+    data.missions.forEach(m=>{
+      box.innerHTML += `
+        <div class="card mission">
+          <div>
+            <b>🎯 ${m.title}</b><br><span style="color:#64748b; font-size:13px;">Difficulty: <strong>${m.difficulty}</strong></span>
+          </div>
+          <button onclick="alert('Starting mission: ${m.title}')">Start</button>
+        </div>
+      `;
+    });
+  } catch(e) {
+    console.error('Error loading missions:', e);
+    document.getElementById("missions").innerHTML = 
+      '<div class="card mission" style="justify-content:center;"><p style="color:#64748b;">⚠️ Failed to load missions</p></div>';
+    showToast("Failed to load missions", "error");
+  }
+}
+
+// ========== LOAD AI TOOLS ==========
+function loadAiTools(){
+  const box = document.getElementById("aiTools");
+  box.innerHTML = "";
+  
+  const mentorIcons = {
+    "Python": "🐍",
+    "Java": "☕",
+    "Aptitude": "🧠",
+    "Web Development": "🌐",
+    "Frontend Developer": "💻",
+    "Backend Developer": "⚙️",
+    "Cloud Computing": "☁️",
+    "Cyber Security": "🔒",
+    "Data Analytics": "📊",
+    "Data Science": "🔬"
+  };
+
+  categories.forEach(cat=>{
+    box.innerHTML += `
+      <div class="card ai-card" onclick="startInterviewModal('${cat.name}')">
+        <div class="ai-icon">${mentorIcons[cat.name] || "🤖"}</div>
+        <h3>${cat.name} Mentor</h3>
+        <p>Get live interviews, practice sessions, and expert feedback in ${cat.name}.</p>
+        <button>Start Session</button>
+      </div>
+    `;
+  });
+}
+
+// ========== INTERVIEW SYSTEM - MODAL ==========
+function startInterviewModal(skill) {
+  interviewSkill = skill;
+  document.getElementById('interviewModal').classList.add('active');
+}
+
+function closeInterview() {
+  document.getElementById('interviewModal').classList.remove('active');
+  currentInterviewId = null;
+  currentQuestionId = null;
+  transcript = '';
+  isListening = false;
+}
+
+// ========== INTERVIEW SYSTEM - INITIALIZATION ==========
+async function initializeInterview(difficulty) {
+  try {
+    const response = await fetch(`${INTERVIEW_API}/start`, {
+      method: 'POST',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({
+        skill_name: interviewSkill || 'Web Development',
+        difficulty: difficulty,
+        total_questions: 5
+      })
+    });
+    const data = await response.json();
+    
+    if(data.success) {
+      currentInterviewId = data.interview_id;
+      initializeSpeechRecognition();
+      await fetchNextQuestion();
+    }
+  } catch(e) {
+    console.error('Error starting interview:', e);
+    alert('Failed to start interview');
+  }
+}
+
+// ========== SPEECH RECOGNITION SETUP ==========
+function initializeSpeechRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  
+  if(!SpeechRecognition) {
+    alert('Speech recognition not supported in your browser');
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  recognition.onstart = () => {
+    isListening = true;
+    updateListenButton();
+  };
+
+  recognition.onresult = (event) => {
+    let interimTranscript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const t = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        transcript += t;
+      } else {
+        interimTranscript += t;
+      }
+    }
+    
+    const transcriptBox = document.querySelector('.transcript-box');
+    if(transcriptBox) {
+      transcriptBox.textContent = transcript + interimTranscript;
+    }
+  };
+
+  recognition.onerror = (event) => {
+    console.error('Speech recognition error:', event.error);
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    updateListenButton();
+  };
+
+  recognitionRef = recognition;
+}
+
+// ========== SPEECH SYNTHESIS (TEXT-TO-SPEECH) ==========
+function speakQuestion(text) {
+  if(!synthRef) {
+    synthRef = window.speechSynthesis;
+  }
+
+  synthRef.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+
+  synthRef.speak(utterance);
+}
+
+// ========== FETCH NEXT QUESTION ==========
+async function fetchNextQuestion() {
+  try {
+    const response = await fetch(`${INTERVIEW_API}/question/${currentInterviewId}`, {
+      headers: getAuthHeaders()
+    });
+    const data = await response.json();
+
+    if(!data.success) {
+      document.getElementById('interviewContent').innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+          <p style="color: #64748b; margin-bottom: 24px;">All questions completed!</p>
+          <button class="btn-next" onclick="endInterview()">
+            <i class="fas fa-check"></i> Get Summary
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    currentQuestionId = data.question_id;
+    transcript = '';
+    
+    document.getElementById('interviewContent').innerHTML = `
+      <div class="question-display">
+        <div class="q-number">Question ${data.question_number}/${data.total_questions}</div>
+        <div class="q-text">${data.question}</div>
+      </div>
+      
+      <p style="color: #64748b; font-size: 14px; margin: 16px 0;">Click "Listen" and speak your answer:</p>
+      
+      <div class="transcript-box" id="transcriptBox">
+        Click button and start speaking...
+      </div>
+
+      <div class="interview-controls">
+        <button class="btn btn-primary btn-listen" id="listenBtn" onclick="toggleListening()">
+          <i class="fas fa-microphone"></i> Start Listening
+        </button>
+        <button class="btn btn-success btn-submit" id="submitBtn" onclick="submitAnswer()" disabled>
+          <i class="fas fa-paper-plane"></i> Submit Answer
+        </button>
+      </div>
+    `;
+
+    // Speak the question after a short delay
+    setTimeout(() => speakQuestion(data.question), 800);
+  } catch(e) {
+    console.error('Error fetching question:', e);
+    alert('Error loading question');
+  }
+}
+// ========== TOGGLE LISTENING ==========
+function toggleListening() {
+  const btn = document.getElementById('listenBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  if(!isListening) {
+    recognitionRef.start();
+  } else {
+    recognitionRef.stop();
+  }
+}
+
+function updateListenButton() {
+  const btn = document.getElementById('listenBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  if(!btn) return;
+  
+  if(isListening) {
+    btn.classList.add('listening');
+    btn.innerHTML = '<span class="status-indicator listening"></span><i class="fas fa-stop"></i> Stop';
+    submitBtn.disabled = false;
+  } else {
+    btn.classList.remove('listening');
+    btn.innerHTML = '<i class="fas fa-microphone"></i> Start Listening';
+  }
+}
+
+// ========== SUBMIT ANSWER WITH AI FEEDBACK ==========
+async function submitAnswer() {
+  if (!transcript.trim()) {
+    alert('Please say something before submitting!');
+    return;
+  }
+
+  try {
+    // 1️⃣ Send user's answer to backend
+    const response = await fetch(
+      `${INTERVIEW_API}/answer/${currentInterviewId}/${currentQuestionId}`,
+      {
+        method: 'POST',
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ answer: transcript })
+      }
+    );
+    const data = await response.json();
+
+    // 3️⃣ Display user answer + backend feedback + AI Mentor feedback
+    document.getElementById('interviewContent').innerHTML = `
+      <div class="question-display">
+        <div class="q-text">Your Answer:</div>
+        <p style="color: #1e293b; margin-top: 12px;">"${transcript}"</p>
+      </div>
+
+      <div class="feedback-display">
+        <div class="score-badge">${data.score}/100</div>
+        <div class="feedback-text">${data.feedback}</div>
+      </div>
+
+      <p style="color: #64748b; font-size: 14px; margin: 16px 0;">
+        <strong>Average Score: ${data.average_score.toFixed(1)}%</strong>
+      </p>
+
+      <div class="interview-controls">
+        ${
+          data.is_last_question
+            ? `<button class="btn-next" onclick="endInterview()" style="flex: 1;">
+                 <i class="fas fa-check"></i> Finish & Get Summary
+               </button>`
+            : `<p style="color: #64748b; text-align: center; flex: 1; padding: 12px;">
+                 Loading next question in 3 seconds...
+               </p>`
+        }
+      </div>
+    `;
+
+    // 4️⃣ Speak backend feedback aloud
+    speakQuestion(`Score ${Math.round(data.score)} out of 100. Feedback: ${data.feedback}`);
+
+    // 5️⃣ Auto-load next question if not last
+    if (!data.is_last_question) {
+      setTimeout(() => fetchNextQuestion(), 3000);
+    }
+
+  } catch (e) {
+    console.error('Error submitting answer:', e);
+    alert('Error submitting answer');
+  }
+}
+
+   
+
+// ========== END INTERVIEW & GET SUMMARY ==========
+async function endInterview() {
+  try {
+    const response = await fetch(
+      `${INTERVIEW_API}/end/${currentInterviewId}`,
+      { method: 'POST', headers: getAuthHeaders() }
+    );
+    const data = await response.json();
+
+    document.getElementById('interviewContent').innerHTML = `
+      <div style="text-align: center; padding: 20px 0;">
+        <h2 style="font-size: 28px; color: #4CAF50; margin-bottom: 20px;">🎉 Interview Complete!</h2>
+        <p style="font-size: 18px; color: #64748b; margin-bottom: 24px;">
+          Average Score: <strong style="color: #4CAF50; font-size: 32px;">${data.average_score.toFixed(1)}%</strong>
+        </p>
+      </div>
+
+      <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; border-left: 4px solid #3b82f6; margin: 20px 0;">
+        <h3 style="color: #1e293b; margin-bottom: 12px;">📊 Summary & Recommendations:</h3>
+        <pre style="color: #1e293b; white-space: pre-wrap; font-size: 13px; line-height: 1.6;">${data.summary}</pre>
+      </div>
+
+      <div class="interview-controls">
+        <button class="btn-next" onclick="closeInterview()" style="flex: 1;">
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </button>
+      </div>
+    `;
+
+    speakQuestion(`Interview complete with a score of ${Math.round(data.average_score)}`);
+  } catch(e) {
+    console.error('Error ending interview:', e);
+    alert('Error completing interview');
+  }
+}
+
+// ========== NAVIGATION FUNCTIONS ==========
+// ========== FIXED NAVIGATION FUNCTIONS ==========
+function showDashboard() {
+  window.scrollTo(0, 0);           // Go to top
+}
+
+function showMissions() {
+  document.querySelector('.section:nth-of-type(3)').scrollIntoView({ behavior: 'smooth' });
+}
+
+function showAI() {
+  startInterviewModal('Web Development');
+}
+
+function showOpportunities() {
+  window.location.href = 'opportunities.html';
+}
+
+function showProfile() {
+  alert('Profile coming soon!');
+}
+
+
+// ========== INITIALIZE PAGE ==========
+function init(){
+  const username = localStorage.getItem("username");
+  if (username) {
+    document.getElementById("welcomeTitle").textContent = `Welcome, ${username} 👋`;
+  }
+  loadCategories();
+  loadMissions();
+  loadAiTools();
+  
+  
+  // Smooth score animation
+  let score = 0;
+  const scoreEl = document.getElementById('score');
+  const targetScore = 856;
+  const increment = targetScore / 120;
+  const timer = setInterval(() => {
+    score += increment;
+    if (score >= targetScore) {
+      score = targetScore;
+      clearInterval(timer);
+    }
+    scoreEl.textContent = `Skillin Score: ${Math.floor(score)}`;
+  }, 25);
+}
+
+function showToast(message, type = "info") {
+  if (window.UI) {
+    window.UI.toast(message, type);
+    return;
+  }
+}
+
+// Start initialization
+init();
+</script>
+
+</body>
+</html>

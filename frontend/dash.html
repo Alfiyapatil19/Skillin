@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skillin | Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:#f7f8fc;color:#1f2937;display:flex;min-height:100vh;flex-wrap:wrap;}
+
+.sidebar{width:240px;background:#ffffff;padding:24px;flex-shrink:0;border-radius:0 16px 16px 0;box-shadow:2px 0 10px rgba(0,0,0,0.05);}
+.sidebar h2{font-size:26px;margin-bottom:40px;display:flex;align-items:center;gap:12px;color:#3b82f6;}
+.sidebar h2 img{width:36px;height:36px;}
+.sidebar a{display:flex;align-items:center;gap:10px;color:#6b7280;text-decoration:none;padding:12px;border-radius:12px;margin-bottom:12px;font-weight:500;transition:0.3s;}
+.sidebar a.active,.sidebar a:hover{background:#e0e7ff;color:#3b82f6;}
+
+.main{flex:1;padding:30px 40px;min-width:300px;background:#f7f8fc;}
+.header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-bottom:30px;}
+.header h1{font-size:28px;font-weight:700;color:#111827;}
+.score{background:#3b82f6;color:#ffffff;padding:12px 24px;border-radius:12px;font-size:18px;font-weight:600;}
+
+.section{margin-bottom:40px;}
+.section h2{font-size:22px;margin-bottom:20px;color:#111827;}
+
+.category-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-bottom:20px;}
+.category-card{background:#ffffff;padding:20px;border-radius:16px;box-shadow:0 5px 15px rgba(0,0,0,0.1);text-align:center;cursor:pointer;transition:0.3s;}
+.category-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.15);}
+.category-card img{width:60px;height:60px;margin-bottom:10px;}
+.category-card h3{font-size:16px;color:#111827;margin-bottom:6px;}
+.category-card p{color:#6b7280;font-size:14px;}
+
+.course-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:40px;}
+.course-card{background:#ffffff;padding:15px;border-radius:16px;box-shadow:0 5px 15px rgba(0,0,0,0.1);transition:0.3s;}
+.course-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.15);}
+.course-card h4{font-size:16px;margin:10px 0 6px;color:#111827;}
+.phase-tabs{display:flex;gap:10px;margin:10px 0;}
+.phase-tabs button{flex:1;padding:8px;background:#e5e7eb;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:0.2s;}
+.phase-tabs button.active{background:#3b82f6;color:#fff;}
+.video-list{margin-top:10px;}
+.video-item{padding:8px 12px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;}
+.video-item a{color:#3b82f6;text-decoration:none;}
+.video-item button{background:#10b981;color:#fff;border:none;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;}
+
+.mission{background:#ffffff;padding:18px 22px;border-radius:16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 5px 15px rgba(0,0,0,0.1);margin-bottom:16px;transition:0.3s;}
+.mission:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.15);}
+.mission button{background:#3b82f6;border:none;color:#ffffff;padding:10px 18px;border-radius:12px;font-weight:600;cursor:pointer;}
+
+.ai-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:20px;}
+.ai-card{padding:20px;border-radius:16px;background:#ffffff;box-shadow:0 5px 15px rgba(0,0,0,0.1);transition:0.3s;}
+.ai-card:hover{transform:translateY(-3px);}
+.ai-card h3{font-size:18px;margin-bottom:10px;}
+.ai-card p{color:#6b7280;font-size:14px;}
+.ai-card button{margin-top:12px;background:#3b82f6;color:#fff;border:none;padding:10px;border-radius:12px;font-weight:600;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/5462/5462089.png"/>
+    Skillin
+  </h2>
+  <a class="active">🏠 Dashboard</a>
+  <a>🎯 Skill Missions</a>
+  <a>📁 Projects</a>
+  <a>🤖 AI Mentor</a>
+  <a>💼 Opportunities</a>
+  <a>👤 Profile</a>
+</div>
+
+<div class="main">
+<div class="header">
+  <h1>Welcome, Student 👋</h1>
+  <div class="score" id="score">Skillin Score: 0</div>
+</div>
+
+<!-- SKILL CATEGORIES -->
+<div class="section">
+  <h2>Skill Categories</h2>
+  <div class="category-grid" id="categories"></div>
+</div>
+
+<!-- COURSES -->
+<div class="section">
+  <h2>Courses</h2>
+  <div class="course-grid" id="courses"></div>
+</div>
+
+<!-- MISSIONS -->
+<div class="section">
+  <h2>Active Skill Missions</h2>
+  <div id="missions"></div>
+</div>
+
+<!-- AI TOOLS -->
+<div class="section">
+  <h2>AI Mentor Tools</h2>
+  <div class="ai-grid" id="aiTools"></div>
+</div>
+</div>
+
+<script>
+const API_ORIGIN = `${window.location.protocol}//${window.location.hostname}:8000`;
+const API = `${API_ORIGIN}/api/dashboard`;
+const USER_ID = 121;
+
+// Skill categories
+const categories = [
+  {name:"Python",logo:"https://cdn-icons-png.flaticon.com/512/5968/5968350.png"},
+  {name:"Java",logo:"https://cdn-icons-png.flaticon.com/512/226/226777.png"},
+  {name:"Aptitude",logo:"https://cdn-icons-png.flaticon.com/512/2838/2838893.png"},
+  {name:"Web Development",logo:"https://cdn-icons-png.flaticon.com/512/919/919827.png"},
+  {name:"Frontend Developer",logo:"https://cdn-icons-png.flaticon.com/512/919/919826.png"},
+  {name:"Backend Developer",logo:"https://cdn-icons-png.flaticon.com/512/919/919825.png"},
+  {name:"Cloud Computing",logo:"https://cdn-icons-png.flaticon.com/512/4140/4140047.png"},
+  {name:"Cyber Security",logo:"https://cdn-icons-png.flaticon.com/512/2910/2910765.png"},
+  {name:"Data Analytics",logo:"https://cdn-icons-png.flaticon.com/512/2911/2911767.png"},
+  {name:"Data Science",logo:"https://cdn-icons-png.flaticon.com/512/3046/3046122.png"}
+];
+
+// Load skill categories
+function loadCategories(){
+  const box = document.getElementById("categories");
+  box.innerHTML = "";
+  categories.forEach(cat=>{
+    box.innerHTML += `
+      <div class="category-card" onclick="loadCourses('${cat.name.toLowerCase()}')">
+        <img src="${cat.logo}" alt="${cat.name}">
+        <h3>${cat.name}</h3>
+        <p>Click to explore courses</p>
+      </div>
+    `;
+  });
+}
+
+// Load courses with phases & videos
+async function loadCourses(skill){
+  try {
+    const res = await fetch(`${API}/courses/${skill}`);
+    if(!res.ok) throw new Error("Failed to fetch courses");
+    const courses = await res.json();
+    const box = document.getElementById("courses");
+    box.innerHTML = "";
+
+    courses.forEach(c=>{
+      const phases = c.phases || {};
+      let phaseButtons = `
+        <div class="phase-tabs">
+          <button class="active" onclick="showPhase('${c.title}', 'basic')">Basic</button>
+          <button onclick="showPhase('${c.title}', 'intermediate')">Intermediate</button>
+          <button onclick="showPhase('${c.title}', 'advanced')">Advanced</button>
+        </div>
+        <div class="video-list" id="${c.title.replace(/\s/g,'')}_videos"></div>
+      `;
+
+      box.innerHTML += `
+        <div class="course-card">
+          <h4>${c.title}</h4>
+          <small>${c.channel || ''}</small>
+          ${phaseButtons}
+        </div>
+      `;
+
+      // Initially load Basic videos
+      renderVideos(c.title, phases.basic || []);
+    });
+  } catch(e){
+    console.error(e);
+    document.getElementById("courses").innerHTML = "<p style='color:red'>Failed to load courses</p>";
+  }
+}
+
+// Render video list
+function renderVideos(courseTitle, videos){
+  const id = `${courseTitle.replace(/\s/g,'')}_videos`;
+  const box = document.getElementById(id);
+  box.innerHTML = "";
+  videos.forEach(v=>{
+    box.innerHTML += `<div class="video-item">
+      <a href="${v.video_url}" target="_blank">${v.title}</a>
+      <button>✔️ Done</button>
+    </div>`;
+  });
+}
+
+// Switch phase
+function showPhase(courseTitle, phase){
+  // Fetch courses from backend again
+  fetch(`${API}/courses/${courseTitle.toLowerCase()}`).then(res=>res.json()).then(courses=>{
+    const course = courses.find(c=>c.title===courseTitle);
+    if(course && course.phases){
+      renderVideos(courseTitle, course.phases[phase] || []);
+    }
+
+    // Update active button
+    const parent = document.getElementById(`${courseTitle.replace(/\s/g,'')}_videos`).previousElementSibling;
+    Array.from(parent.children).forEach(btn=>btn.classList.remove('active'));
+    const phaseMap = {basic:0, intermediate:1, advanced:2};
+    parent.children[phaseMap[phase]].classList.add('active');
+  });
+}
+
+// Load missions dynamically
+async function loadMissions(){
+  const res = await fetch(`${API}/missions`);
+  const missions = await res.json();
+  const box = document.getElementById("missions");
+  box.innerHTML = "";
+  missions.forEach(m=>{
+    box.innerHTML += `
+      <div class="mission">
+        <div>
+          <b>${m.title}</b><br>Difficulty: ${m.difficulty}
+        </div>
+        <button>Start</button>
+      </div>
+    `;
+  });
+}
+
+// Load AI tools dynamically
+async function loadAiTools(){
+  const res = await fetch(`${API}/ai-tools`);
+  const tools = await res.json();
+  const box = document.getElementById("aiTools");
+  box.innerHTML = "";
+  tools.forEach(t=>{
+    box.innerHTML += `
+      <div class="ai-card">
+        <h3>🤖 ${t.name}</h3>
+        <p>${t.description}</p>
+        <button>Start</button>
+      </div>
+    `;
+  });
+}
+
+// Load dashboard
+async function init(){
+  loadCategories();
+  await loadMissions();
+  await loadAiTools();
+}
+init();
+</script>
+</body>
+</html>
+
+this is frontend make it as per ypur requirement

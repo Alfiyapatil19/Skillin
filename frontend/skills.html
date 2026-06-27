@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skillin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+body{
+    background:#f8fafc;
+    color:#111;
+}
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:1.5rem;
+}
+
+/* HEADER */
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:1rem 0;
+}
+.site-footer{
+    margin-top:30px;
+    text-align:center;
+    color:#64748b;
+    font-size:13px;
+}
+.logo{
+    font-size:1.6rem;
+    font-weight:700;
+    color:#2563eb;
+}
+
+/* NAV LINKS */
+nav a{
+    margin-left:1rem;
+    padding:.5rem 1rem;
+    border-radius:6px;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:none;
+    color:#1e293b;
+}
+nav a:hover{
+    background:#e0f2fe;
+    color:#2563eb;
+}
+
+/* BUTTONS */
+.btn-primary{
+    background:#2563eb;
+    color:white;
+    text-decoration:none;
+}
+.btn-secondary{
+    background:#e5e7eb;
+    color:#111;
+    text-decoration:none;
+}
+
+/* HERO SECTION */
+.hero{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:2rem;
+    padding:1.8rem;
+    background:#e0f2fe;
+    border-radius:16px;
+    margin:1.5rem 0;
+}
+.hero-text{
+    max-width:520px;
+}
+.hero-text h1{
+    font-size:2.3rem;
+    margin-bottom:.6rem;
+}
+.hero-text p{
+    color:#475569;
+    margin-bottom:1rem;
+}
+.hero-text a{
+    display:inline-block;
+    padding:.6rem 1.2rem;
+    border-radius:6px;
+    font-weight:600;
+    margin-right:.5rem;
+}
+
+/* HERO IMAGE */
+.hero-image img{
+    max-width:340px;
+}
+
+/* SECTIONS */
+section{
+    margin:3rem 0;
+}
+section h2{
+    text-align:center;
+    font-size:2rem;
+    margin-bottom:1.5rem;
+    color:#1e40af;
+}
+
+/* CARDS */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:1.5rem;
+}
+.card{
+    background:white;
+    padding:1.4rem;
+    border-radius:14px;
+    text-align:center;
+}
+.card img{
+    width:55px;
+    margin-bottom:.7rem;
+}
+
+/* SKILLS */
+.skills-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1.2rem;
+}
+.skill-card{
+    background:white;
+    padding:1.2rem;
+    border-radius:14px;
+    text-align:center;
+}
+.skill-card img{
+    width:45px;
+    margin-bottom:.4rem;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+    .hero{
+        flex-direction:column;
+        text-align:center;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <div class="logo">
+        <a href="index.html" style="text-decoration:none;color:#2563eb;">Skillin</a>
+    </div>
+    <nav>
+        <a href="#hero">Home</a>
+        <a href="#skills">Skills</a>
+        <a href="login.html">Login</a>
+    </nav>
+</header>
+
+<!-- ================= HERO SECTION ================= -->
+<div class="hero" id="hero">
+
+    <div class="hero-text">
+        <h1>Build Skills. Prove Them. Get Hired.</h1>
+        <p>From basics to job-ready with real projects and score-based mentoring.</p>
+        <a href="signup.html" class="btn-primary">Get Started Free</a>
+        <a href="#skills" class="btn-secondary">Explore Skills</a>
+    </div>
+
+    <div class="hero-image">
+        <!-- Software engineer working on computer -->
+        <img src="https://img.freepik.com/premium-vector/young-software-engineer-types-laptop-with-various-tech-icons-tools-displayed-around-him-software-engineer-customizable-cartoon-illustration_538213-143334.jpg"
+             alt="Software engineer working on computer">
+    </div>
+
+</div>
+<!-- ================================================= -->
+
+<section id="how-it-works">
+    <h2>How Skillin Works</h2>
+    <div class="cards">
+
+        <div class="card">
+            <!-- Learn & Practice -->
+            <img src="https://cdn-icons-png.flaticon.com/512/2991/2991103.png">
+            <h3>Learn & Practice</h3>
+            <p>Basics, aptitude, coding tasks</p>
+        </div>
+
+        <div class="card">
+            <!-- Build Projects -->
+            <img src="https://cdn-icons-png.flaticon.com/512/3062/3062637.png">
+            <h3>Build Projects</h3>
+            <p>Hands-on real-world projects</p>
+        </div>
+
+        <div class="card">
+            <!-- Get Mentored -->
+            <img src="https://cdn-icons-png.flaticon.com/512/1995/1995521.png">
+            <h3>Get Mentored</h3>
+            <p>Opportunities unlocked by score</p>
+        </div>
+
+    </div>
+</section>
+
+<section id="skills">
+    <h2>Skills Offered</h2>
+    <div class="skills-grid" id="skillsGrid"></div>
+</section>
+
+</div>
+<div class="site-footer">Skillin © 2026</div>
+
+<script>
+const API_ORIGIN = `${window.location.protocol}//${window.location.hostname}:8000`;
+const API_BASE = `${API_ORIGIN}/api`;
+const defaultSkills = [
+  { name: "Python Backend", icon: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" },
+  { name: "Web Development", icon: "https://cdn-icons-png.flaticon.com/512/732/732212.png" },
+  { name: "Data Structures", icon: "https://cdn-icons-png.flaticon.com/512/3062/3062634.png" },
+  { name: "Aptitude & Logic", icon: "https://cdn-icons-png.flaticon.com/512/1087/1087840.png" }
+];
+
+function renderSkills(skills) {
+  const box = document.getElementById("skillsGrid");
+  box.innerHTML = "";
+  skills.forEach((s) => {
+    box.innerHTML += `
+      <div class="skill-card">
+        <img src="${s.icon}" alt="${s.name}">
+        <p>${s.name}</p>
+      </div>
+    `;
+  });
+}
+
+async function hydrateFromBackend() {
+  try {
+    const res = await fetch(`${API_BASE}/dashboard/courses/python`);
+    const data = await res.json();
+    if (!data.success) {
+      renderSkills(defaultSkills);
+      return;
+    }
+    renderSkills(defaultSkills);
+  } catch (e) {
+    renderSkills(defaultSkills);
+  }
+}
+
+hydrateFromBackend();
+</script>
+</body>
+</html>

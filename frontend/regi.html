@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skillin | Sign Up</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ---- YOUR ORIGINAL CSS (UNCHANGED) ---- */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+      radial-gradient(circle at top left,#93c5fd,transparent 40%),
+      radial-gradient(circle at bottom right,#c4b5fd,transparent 40%),
+      #020617;
+    position: relative;
+}
+.top-brand{
+    position: fixed;
+    top: 20px;
+    left: 24px;
+    color:#93c5fd;
+    text-decoration:none;
+    font-weight:700;
+}
+.page-footer{
+    position: fixed;
+    bottom: 12px;
+    left: 0;
+    width: 100%;
+    text-align:center;
+    color:#cbd5f5;
+    font-size:12px;
+}
+.signup-box{
+    width:100%;
+    max-width:480px;
+    padding:2.6rem 2.4rem;
+    border-radius:22px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+    border:1px solid rgba(255,255,255,0.15);
+    box-shadow:0 40px 80px rgba(0,0,0,.4);
+    color:#e5e7eb;
+}
+.signup-box h1{
+    text-align:center;
+    font-size:2rem;
+    font-weight:700;
+    margin-bottom:.4rem;
+    background:linear-gradient(90deg,#60a5fa,#a78bfa);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+.signup-box p{
+    text-align:center;
+    font-size:.9rem;
+    color:#cbd5f5;
+    margin-bottom:2rem;
+}
+.input-group{
+    position:relative;
+    margin-bottom:1.8rem;
+}
+.input-group input,
+.input-group select{
+    width:100%;
+    height:52px;
+    padding:0 14px;
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.25);
+    border-radius:14px;
+    color:#e5e7eb;
+    font-size:.95rem;
+}
+.input-group select{
+    appearance:none;
+    cursor:pointer;
+}
+.input-group select option{
+    background:#020617;
+    color:#e5e7eb;
+}
+.input-group input:focus,
+.input-group select:focus{
+    outline:none;
+    border-color:#60a5fa;
+    box-shadow:0 0 15px rgba(96,165,250,.4);
+}
+.input-group label{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:.85rem;
+    color:#cbd5f5;
+    pointer-events:none;
+    transition:.25s ease;
+    padding:0 .35rem;
+    background:rgba(2,6,23,.85);
+    border-radius:6px;
+}
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label,
+.input-group select:focus + label,
+.input-group select:valid + label{
+    top:-6px;
+    font-size:.72rem;
+    color:#60a5fa;
+}
+.row{
+    display:flex;
+    gap:14px;
+}
+.row .input-group{
+    flex:1;
+}
+.signup-btn{
+    width:100%;
+    height:52px;
+    border:none;
+    border-radius:14px;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    background:linear-gradient(90deg,#60a5fa,#a78bfa);
+    color:#020617;
+    transition:.3s;
+}
+.signup-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 30px rgba(96,165,250,.6);
+}
+.login{
+    text-align:center;
+    font-size:.85rem;
+    margin-top:1.5rem;
+}
+.login a{
+    color:#a78bfa;
+    font-weight:600;
+    text-decoration:none;
+}
+.login a:hover{
+    text-decoration:underline;
+}
+</style>
+</head>
+
+<body>
+<a class="top-brand" href="index.html">Skillin</a>
+
+<div class="signup-box">
+
+    <h1>Create Account</h1>
+    <p>Start your Skillin journey today</p>
+
+    <!-- ✅ FORM ADDED (structure same) -->
+    <form id="signupForm">
+
+        <div class="input-group">
+            <input type="text" id="username" required placeholder=" ">
+            <label>Full Name</label>
+        </div>
+
+        <div class="input-group">
+            <input type="email" id="email" required placeholder=" ">
+            <label>Email Address</label>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="password" required placeholder=" ">
+            <label>Password</label>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="confirmPassword" required placeholder=" ">
+            <label>Confirm Password</label>
+        </div>
+
+        <div class="input-group">
+            <select id="education" required>
+                <option value="" hidden></option>
+                <option>10th (SSC)</option>
+                <option>12th (HSC)</option>
+                <option>Diploma</option>
+                <option>BCA</option>
+                <option>B.Sc</option>
+                <option>B.Com</option>
+                <option>B.E / B.Tech</option>
+                <option>MCA</option>
+                <option>MBA</option>
+                <option>Other</option>
+            </select>
+            <label>Education</label>
+        </div>
+
+        <div class="row">
+            <div class="input-group">
+                <input type="text" id="college" required placeholder=" ">
+                <label>College Name</label>
+            </div>
+
+            <div class="input-group">
+                <select id="graduation" required>
+                    <option value="" hidden></option>
+                    <option>2024</option>
+                    <option>2025</option>
+                    <option>2026</option>
+                    <option>2027</option>
+                    <option>2028</option>
+                </select>
+                <label>Graduation Year</label>
+            </div>
+        </div>
+
+        <button type="submit" class="signup-btn">Create Account</button>
+
+    </form>
+
+    <div class="login">
+        Already have an account? <a href="login.html">Login</a>
+    </div>
+
+</div>
+
+<!-- ✅ ONLY LOGIC ADDED -->
+<script src="ui.js"></script>
+<script>
+const API_ORIGIN = `${window.location.protocol}//${window.location.hostname}:8000`;
+const API_BASE = `${API_ORIGIN}/api`;
+
+document.getElementById("signupForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    if (password.value !== confirmPassword.value) {
+        alert("Passwords do not match");
+        return;
+    }
+    const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+    if (!strongPassword.test(password.value)) {
+        alert("Password must be 8+ chars and include uppercase, lowercase, number, and special character.");
+        return;
+    }
+
+    const data = {
+        username: username.value,
+        email: email.value,
+        password: password.value,
+        education: education.value,
+        college_name: college.value,
+        graduation_year: parseInt(graduation.value)
+    };
+
+    try {
+        showToast("Creating your account...", "info");
+        const res = await fetch(`${API_BASE}/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+            showToast(result.detail || "Registration failed", "error");
+            return;
+        }
+
+        showToast("Account created successfully", "success");
+        window.location.href = "login.html";
+
+    } catch (err) {
+        showToast("Backend not running", "error");
+        console.error(err);
+    }
+});
+
+function showToast(message, type = "info") {
+    if (window.UI) {
+        window.UI.toast(message, type);
+        return;
+    }
+}
+</script>
+
+<div class="page-footer">Skillin © 2026</div>
+</body>
+</html>
